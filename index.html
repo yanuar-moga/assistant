@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PANDA ASSISTANT - Intelligent Character AI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="css/animation.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1f4e78">
+</head>
+<body>
+    <div id="app-background" class="fullscreen-bg"></div>
+
+    <div id="assistant-widget" class="assistant-character idle-animation">
+        <img id="assistant-gif" src="assets/assistants/panda/idle.gif" alt="AI Character">
+    </div>
+
+    <div id="chatbox-container" class="chatbox-hidden">
+        <div class="chat-header">
+            <div class="header-left">
+                <img id="header-avatar" src="assets/icons/panda.png" class="avatar-img" alt="Avatar">
+                <h3 id="header-title" class="typewriter">PANDA ASSISTANT</h3>
+            </div>
+            <div class="header-right">
+                <button id="btn-minimize" class="control-btn" title="Minimize">_</button>
+                <button id="btn-close" class="control-btn" title="Close">×</button>
+            </div>
+        </div>
+        
+        <div id="chat-body" class="chat-body-area"></div>
+
+        <div id="typing-indicator" class="typing-area hide-typing">
+            <span id="typing-text">Panda sedang mengetik...</span>
+        </div>
+
+        <div id="command-autocomplete" class="autocomplete-popup hide-popup"></div>
+
+        <div class="chat-input-bar">
+            <input type="text" id="chat-input" placeholder="Tulis pertanyaan..." autocomplete="off">
+            <button id="btn-send" class="send-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/typing.js"></script>
+
+    <script src="js/account.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/memory.js"></script>
+    <script src="js/commands.js"></script>
+
+    <script src="js/assistant.js"></script>
+    <script src="js/chat.js"></script>
+    
+    <script src="js/app.js"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => console.log('PWA Service Worker registered successfully:', reg.scope))
+                .catch(err => console.error('Service Worker registration failed:', err));
+        }
+    </script>
+</body>
+</html>
