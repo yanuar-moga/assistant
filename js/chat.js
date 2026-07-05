@@ -100,8 +100,10 @@ const ChatEngine = {
         TypingEngine.show();
         
         try {
-            // Melakukan HTTP Request GET ke Google Apps Script Web App Anda
-            const response = await fetch(`${this.SPREADSHEET_WEB_APP_URL}?action=getFAQ&keyword=${encodeURIComponent(prompt)}`);
+            // Request murni GET tanpa rekayasa header di client-side
+            const response = await fetch(`${this.SPREADSHEET_WEB_APP_URL}?action=getFAQ&keyword=${encodeURIComponent(prompt)}`, {
+                method: "GET"
+            });
             
             if (!response.ok) {
                 throw new Error("Gagal mengambil data dari Google Apps Script");
@@ -124,8 +126,8 @@ const ChatEngine = {
         } catch(e) {
             // Penanganan jika jaringan komputer/hosting putus
             TypingEngine.hide();
-            this.appendMessage("Assistant", "Maaf, koneksi ke database Spreadsheet terputus atau gagal membaca server. Silakan periksa jaringan Anda.");
-            console.error("Apps Script Integration Error: ", e);
+            this.appendMessage("Assistant", "Maaf, gagal memuat data dari Spreadsheet. Pastikan URL Web App sudah dideploy sebagai 'Anyone'.");
+            console.error("GET Fetch Error: ", e);
         }
     }
 };
