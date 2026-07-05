@@ -20,14 +20,10 @@ const AssistantEngine = {
         const gif = document.getElementById("assistant-gif");
         if (!gif) return;
 
-        // URL langsung ke file GIF Anda
-        const pandaGif = "https://yanuar-moga.github.io/assistant/assets/icons/mypanda.gif";
-        const clippyGif = "https://yanuar-moga.github.io/assistant/assets/icons/clippy.gif";
-
         if (this.current.toLowerCase() === "clippy") {
-            gif.src = clippyGif;
+            gif.src = "https://yanuar-moga.github.io/assistant/assets/icons/clippy.gif";
         } else {
-            gif.src = pandaGif;
+            gif.src = "https://yanuar-moga.github.io/assistant/assets/icons/mypanda.gif";
         }
     },
 
@@ -66,7 +62,6 @@ const AssistantEngine = {
         const avatar = document.getElementById("header-avatar");
         const title = document.getElementById("header-title");
         
-        // Update Ikon Header (Panda vs Clippy)
         if (name.toLowerCase() === "clippy") {
             avatar.src = "https://yanuar-moga.github.io/assistant/assets/icons/clippy.png";
         } else {
