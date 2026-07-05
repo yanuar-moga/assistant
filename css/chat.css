@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BALON CHAT GAYA WHATSAPP (DENGAN EKOR)
+   BALON CHAT GAYA WHATSAPP (DENGAN EKOR & ANIMASI TITIK MENGETIK)
    ========================================================================== */
 #chatbox-container {
     position: fixed;
@@ -16,7 +16,9 @@
     overflow: hidden;
 }
 
-.chatbox-hidden { display: none !important; }
+.chatbox-hidden { 
+    display: none !important; 
+}
 
 .chat-header {
     background-color: #1f4e78;
@@ -27,10 +29,30 @@
     align-items: center;
 }
 
-.header-left { display: flex; align-items: center; }
-.header-title-container { display: inline-block; }
-.avatar-img { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; }
-.control-btn { background: none; border: none; color: white; cursor: pointer; font-size: 16px; margin-left: 8px; }
+.header-left { 
+    display: flex; 
+    align-items: center; 
+}
+
+.header-title-container { 
+    display: inline-block; 
+}
+
+.avatar-img { 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 50%; 
+    margin-right: 10px; 
+}
+
+.control-btn { 
+    background: none; 
+    border: none; 
+    color: white; 
+    cursor: pointer; 
+    font-size: 16px; 
+    margin-left: 8px; 
+}
 
 .chat-body-area {
     flex: 1;
@@ -61,6 +83,7 @@
     float: left;
     border-bottom-left-radius: 2px;
 }
+
 .chat-left::before {
     content: "";
     position: absolute;
@@ -80,6 +103,7 @@
     float: right;
     border-bottom-right-radius: 2px;
 }
+
 .chat-right::before {
     content: "";
     position: absolute;
@@ -93,7 +117,10 @@
 }
 
 /* INDIKATOR MENGETIK & INPUT */
-.hide-typing { display: none !important; }
+.hide-typing { 
+    display: none !important; 
+}
+
 .typing-area {
     padding: 10px 15px;
     font-size: 13px;
@@ -101,19 +128,76 @@
     font-style: italic;
     background-color: rgba(255, 255, 255, 0.8);
     border-top: 1px solid #eee;
+    display: flex;
+    align-items: center;
 }
 
-.chat-input-bar { display: flex; padding: 10px; background: #f0f0f0; border-top: 1px solid #ddd; }
-#chat-input { flex: 1; padding: 8px 12px; border: 1px solid #ccc; border-radius: 20px; outline: none; }
-.send-btn { background: none; border: none; color: #1f4e78; margin-left: 8px; cursor: pointer; }
+/* Efek Animasi Tiga Titik Melompat Otomatis */
+#typing-text::after {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    text-align: left;
+    animation: dotLoading 1.5s infinite steps(4, start);
+}
+
+@keyframes dotLoading {
+    0%   { content: ""; }
+    25%  { content: "."; }
+    50%  { content: ".."; }
+    75%  { content: "..."; }
+    100% { content: ""; }
+}
+
+.chat-input-bar { 
+    display: flex; 
+    padding: 10px; 
+    background: #f0f0f0; 
+    border-top: 1px solid #ddd; 
+}
+
+#chat-input { 
+    flex: 1; 
+    padding: 8px 12px; 
+    border: 1px solid #ccc; 
+    border-radius: 20px; 
+    outline: none; 
+}
+
+.send-btn { 
+    background: none; 
+    border: none; 
+    color: #1f4e78; 
+    margin-left: 8px; 
+    cursor: pointer; 
+}
 
 .autocomplete-popup {
-    position: absolute; bottom: 60px; left: 10px; right: 10px;
-    background: white; border: 1px solid #ccc; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 1010;
+    position: absolute; 
+    bottom: 60px; 
+    left: 10px; 
+    right: 10px;
+    background: white; 
+    border: 1px solid #ccc; 
+    border-radius: 8px; 
+    max-height: 200px; 
+    overflow-y: auto; 
+    z-index: 1010;
 }
-.hide-popup { display: none !important; }
-.autocomplete-item { padding: 8px 12px; cursor: pointer; font-family: monospace; }
-.autocomplete-item:hover { background: #f0f0f0; }
+
+.hide-popup { 
+    display: none !important; 
+}
+
+.autocomplete-item { 
+    padding: 8px 12px; 
+    cursor: pointer; 
+    font-family: monospace; 
+}
+
+.autocomplete-item:hover { 
+    background: #f0f0f0; 
+}
 
 .chat-time {
     font-size: 10px;
@@ -124,4 +208,10 @@
     justify-content: flex-end;
     align-items: center;
 }
-.chat-ticks { font-size: 12px; margin-left: 4px; line-height: 1; transition: color 0.3s ease; }
+
+.chat-ticks { 
+    font-size: 12px; 
+    margin-left: 4px; 
+    line-height: 1; 
+    transition: color 0.3s ease; 
+}
