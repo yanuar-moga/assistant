@@ -1,6 +1,6 @@
-/* ===========================
-   RESET
-=========================== */
+/* ==========================================================================
+   1. RESET & BASE STYLES
+   ========================================================================== */
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -13,11 +13,12 @@ body {
     height: 100%;
     overflow: hidden;
     font-family: Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* ===========================
-   FULLSCREEN BACKGROUND
-=========================== */
+/* ==========================================================================
+   2. FULLSCREEN BACKGROUND WITH OVERLAY
+   ========================================================================== */
 .fullscreen-bg {
     position: fixed;
     top: 0;
@@ -26,7 +27,7 @@ body {
     height: 100%;
     z-index: -1;
 
-    background:
+    background-image: 
         linear-gradient(
             rgba(0, 0, 0, 0.35),
             rgba(0, 0, 0, 0.35)
@@ -37,13 +38,12 @@ body {
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-
     transition: background 0.5s ease;
 }
 
-/* ===========================
-   ASSISTANT CHARACTER
-=========================== */
+/* ==========================================================================
+   3. ASSISTANT CHARACTER WIDGET
+   ========================================================================== */
 .assistant-character {
     position: fixed;
     bottom: 20px;
@@ -52,8 +52,8 @@ body {
     height: 150px;
     cursor: pointer;
     z-index: 999;
-
-    transition: transform 0.3s ease;
+    will-change: transform; 
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .assistant-character:hover {
@@ -65,5 +65,6 @@ body {
     height: 100%;
     object-fit: contain;
     user-select: none;
-    pointer-events: none;
+    -webkit-user-drag: none;
+    pointer-events: none; 
 }
