@@ -1,10 +1,13 @@
+/**
+ * PANDA ASSISTANT - Core Assistant Persona Engine
+ */
 const AssistantEngine = {
     current: "Panda",
-    config: {},
 
     async init() {
         const saved = localStorage.getItem("panda_assistant_persona");
         if(saved) this.current = saved;
+        
         this.renderWidget();
         
         document.getElementById("assistant-widget").addEventListener("click", () => {
@@ -13,9 +16,12 @@ const AssistantEngine = {
     },
 
     renderWidget() {
-        const gif = document.getElementById("assistant-gif");
-        // Pemetaan dinamis karakter
-        gif.src = `assets/assistants/${this.current.toLowerCase()}/idle.gif`;
+        const gif = document.getElementById("assistant-widget").querySelector("img");
+        if (this.current.toLowerCase() === "panda") {
+            gif.src = "https://apxid.github.io/assistant/assets/mypanda.gif";
+        } else {
+            gif.src = `assets/assistants/${this.current.toLowerCase()}/idle.gif`;
+        }
     },
 
     activateChatbox() {
@@ -47,10 +53,15 @@ const AssistantEngine = {
     switchPersona(name) {
         this.current = name;
         localStorage.setItem("panda_assistant_persona", name);
-        this.renderWidget();
         
         const avatar = document.getElementById("header-avatar");
-        avatar.src = `assets/icons/${name.toLowerCase()}.png`;
+        if (name.toLowerCase() === "panda") {
+            avatar.src = "https://apxid.github.io/assistant/assets/panda.png";
+        } else {
+            avatar.src = `assets/icons/${name.toLowerCase()}.png`;
+        }
+        
         document.getElementById("header-title").innerText = `${name.toUpperCase()} ASSISTANT`;
+        this.renderWidget();
     }
 };
