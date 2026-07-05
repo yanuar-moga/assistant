@@ -1,7 +1,8 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
- * Update 2026: Dynamic Command & Auto-Queue Integration
+ * Versi Clean & Consolidated (Gunakan ini untuk replace total)
  */
+
 const ChatEngine = {
     SPREADSHEET_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwx1xLp3t0fgG1idoqsz9vCaEd0A3xo8N9pzcLLY8bzzjn9npvoKijXBFtOg4iekBFn1A/exec",
 
@@ -12,14 +13,18 @@ const ChatEngine = {
         const btnSend = document.getElementById("btn-send");
         const btnClose = document.getElementById("btn-close");
 
-        btnSend.addEventListener("click", () => this.sendMessage());
-        input.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") this.sendMessage();
-        });
-        btnClose.addEventListener("click", () => {
-            this.appendMessage("Assistant", "Sampai jumpa lagi! ✨");
-            setTimeout(() => AssistantEngine.deactivateChatbox(), 1000);
-        });
+        if(btnSend) btnSend.addEventListener("click", () => this.sendMessage());
+        if(input) {
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") this.sendMessage();
+            });
+        }
+        if(btnClose) {
+            btnClose.addEventListener("click", () => {
+                this.appendMessage("Assistant", "Sampai jumpa lagi! ✨");
+                setTimeout(() => AssistantEngine.deactivateChatbox(), 1000);
+            });
+        }
     },
 
     initializeUI() {
@@ -39,19 +44,17 @@ const ChatEngine = {
         input.value = "";
         Utils.playSound("send");
 
-        // 1. Cek Flow Pendaftaran Nama
         const flow = localStorage.getItem("panda_flow_step");
         if (flow === "WAITING_NAME") {
             this.handleNameRegistration(text, msgId);
             return;
         }
 
-        // 2. Cek apakah perintah Slash
         if (text.startsWith("/")) {
+            // Memanggil CommandEngine yang didefinisikan di bawah
             CommandEngine.execute(text);
             this.markAsRead(msgId);
         } else {
-            // 3. Jika bukan perintah, proses sebagai FAQ
             this.processAiResponse(text, msgId);
         }
     },
@@ -67,16 +70,12 @@ const ChatEngine = {
         }, 1000);
     },
 
-    // Fungsi pusat untuk mengambil data dari Google Apps Script
     async processAiResponse(prompt, userMsgId, isCommand = false) {
         TypingEngine.show();
         const userName = localStorage.getItem("panda_user_name") || "Guest";
-        
-        // Pilih action berdasarkan apakah ini command atau FAQ
         const action = isCommand ? "getCommand" : "getFAQ";
         const cleanKey = encodeURIComponent(prompt.toLowerCase().trim());
         
-        // Logika tracking FAQ
         let count = 1;
         if (!isCommand) {
             let history = JSON.parse(localStorage.getItem("panda_keyword_history")) || {};
@@ -96,7 +95,7 @@ const ChatEngine = {
             if (result.status === "success") {
                 this.appendMessage("Assistant", result.answer);
             } else {
-                this.appendMessage("Assistant", "Maaf, saya belum mengerti itu. Pertanyaan Anda sudah dicatat untuk dipelajari nanti! 🐼");
+                this.appendMessage("Assistant", "Maaf, data tidak ditemukan. Pertanyaan Anda sudah dicatat! 🐼");
             }
         } catch (e) {
             TypingEngine.hide();
@@ -127,7 +126,6 @@ const ChatEngine = {
         }
     },
 
-    // Fungsi Lokal untuk Clear Chat
     clearChat() {
         const body = document.getElementById("chat-body");
         while (body.firstChild) body.removeChild(body.firstChild);
@@ -135,22 +133,15 @@ const ChatEngine = {
     }
 };
 
-// Command Engine untuk menangani Slash Commands
 const CommandEngine = {
     execute(text) {
         const cmd = text.toLowerCase().trim();
-
-        // 1. Perintah Lokal (Tidak butuh ke Server)
         if (cmd === "/cls" || cmd === "/clear") {
             ChatEngine.clearChat();
-        } 
-        // 2. Perintah Bantuan (Ambil dari Sheet Commands via GAS)
-        else if (cmd === "/help") {
-            ChatEngine.processAiResponse("/help", "msg-help", true); // Panggil action getHelp di GAS
-        } 
-        // 3. Perintah Lain (About, Jadwal, dll - Ambil dari Sheet Commands)
-        else {
-            ChatEngine.processAiResponse(cmd, "msg-cmd", true); // Action getCommand
+        } else if (cmd === "/help") {
+            ChatEngine.processAiResponse("/help", "msg-help", true);
+        } else {
+            ChatEngine.processAiResponse(cmd, "msg-cmd", true);
         }
     }
 };
