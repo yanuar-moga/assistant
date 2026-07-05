@@ -17,10 +17,11 @@ const AssistantEngine = {
 
     renderWidget() {
         const gif = document.getElementById("assistant-widget").querySelector("img");
+        // Menggunakan URL lengkap sesuai permintaan Anda
         if (this.current.toLowerCase() === "panda") {
-            gif.src = "https://apxid.github.io/assistant/assets/mypanda.gif";
+            gif.src = "https://yanuar-moga.github.io/assistant/assets/icons/mypanda.gif";
         } else {
-            gif.src = `assets/assistants/${this.current.toLowerCase()}/idle.gif`;
+            gif.src = "https://yanuar-moga.github.io/assistant/assets/icons/clippy.gif";
         }
     },
 
@@ -55,10 +56,12 @@ const AssistantEngine = {
         localStorage.setItem("panda_assistant_persona", name);
         
         const avatar = document.getElementById("header-avatar");
+        // Update ikon header chatbox dengan URL lengkap
         if (name.toLowerCase() === "panda") {
-            avatar.src = "https://apxid.github.io/assistant/assets/panda.png";
+            avatar.src = "https://yanuar-moga.github.io/assistant/assets/panda.png";
         } else {
-            avatar.src = `assets/icons/${name.toLowerCase()}.png`;
+            // Jika Anda punya ikon png untuk clippy, ganti URL di bawah ini
+            avatar.src = "https://yanuar-moga.github.io/assistant/assets/icons/clippy.png"; 
         }
         
         document.getElementById("header-title").innerText = `${name.toUpperCase()} ASSISTANT`;
