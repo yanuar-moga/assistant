@@ -1,5 +1,5 @@
 /* ==========================================================================
-   TYPEWRITER LOOPING EFFECT (HEADER CHAT) - FIXED INSTANT RESET
+   TYPEWRITER LOOPING EFFECT (HEADER CHAT) - FADE OUT LOOP
    ========================================================================= */
 .typewriter {
     display: inline-block;
@@ -7,19 +7,37 @@
     white-space: nowrap;
     border-right: 2px solid #ffffff; 
     margin: 0;
-    /* MEMBUANG 'alternate' agar tidak menghapus ke belakang, menggunakan 'infinite' murni */
+    /* Menggunakan infinite tanpa alternate agar animasi selalu mengulang dari kanan/awal */
     animation: 
         typingEffect 4s steps(20, end) infinite,
         blinkCursor 0.75s step-end infinite;
 }
 
 @keyframes typingEffect {
-    0% { width: 0; }
-    /* Proses mengetik maju dari 0% ke 40% */
-    40%, 85% { width: 100%; } 
-    /* Teks diam mempertahankan posisi penuh dari 40% hingga 85% */
-    90%, 100% { width: 0; } 
-    /* Detik-detik akhir (85% ke 90%) langsung amblas ke 0 secara instan tanpa kelihatan mundur panjang */
+    0% { 
+        width: 0; 
+        opacity: 1; 
+    }
+    /* Proses teks mengetik maju dari kiri ke kanan */
+    45% { 
+        width: 100%; 
+        opacity: 1; 
+    }
+    /* Teks diam terbaсa penuh (posisi menahan durasi) */
+    80% { 
+        width: 100%; 
+        opacity: 1; 
+    }
+    /* Efek FADE OUT: Teks memudar sampai hilang total di posisi penuh */
+    90%, 95% { 
+        width: 100%; 
+        opacity: 0; 
+    }
+    /* Reset instan ke lebar 0 saat posisi ga kelihatan (transparan) untuk bersiap loop baru */
+    100% { 
+        width: 0; 
+        opacity: 0; 
+    }
 }
 
 @keyframes blinkCursor {
