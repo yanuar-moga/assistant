@@ -6,7 +6,6 @@ const AssistantEngine = {
     current: "Panda",
 
     async init() {
-        // Mengambil persona terakhir dari memori (localStorage)
         const saved = localStorage.getItem("panda_assistant_persona");
         if(saved) this.current = saved;
         
@@ -17,20 +16,17 @@ const AssistantEngine = {
         });
     },
 
-    // Fungsi otomatis untuk mengganti GIF karakter berdasarkan persona
     renderWidget() {
         const gif = document.getElementById("assistant-gif");
         if (!gif) return;
 
+        // URL langsung ke file GIF Anda
         const pandaGif = "https://yanuar-moga.github.io/assistant/assets/icons/mypanda.gif";
         const clippyGif = "https://yanuar-moga.github.io/assistant/assets/icons/clippy.gif";
 
-        if (this.current.toLowerCase() === "panda") {
-            gif.src = pandaGif;
-        } else if (this.current.toLowerCase() === "clippy") {
+        if (this.current.toLowerCase() === "clippy") {
             gif.src = clippyGif;
         } else {
-            // Default fallback
             gif.src = pandaGif;
         }
     },
@@ -44,7 +40,6 @@ const AssistantEngine = {
         chatbox.classList.remove("crt-shutdown");
         chatbox.classList.add("slide-up");
         
-        // Panggil fungsi sapaan jika tersedia di ChatEngine
         if (typeof ChatEngine !== 'undefined') {
             ChatEngine.triggerGreeting();
         }
@@ -64,7 +59,6 @@ const AssistantEngine = {
         }, 500);
     },
 
-    // Fungsi untuk mengganti persona dan memperbarui UI secara real-time
     switchPersona(name) {
         this.current = name;
         localStorage.setItem("panda_assistant_persona", name);
@@ -72,24 +66,20 @@ const AssistantEngine = {
         const avatar = document.getElementById("header-avatar");
         const title = document.getElementById("header-title");
         
-        // Update Ikon Header
-        if (name.toLowerCase() === "panda") {
-            avatar.src = "https://yanuar-moga.github.io/assistant/assets/panda.png";
-        } else {
+        // Update Ikon Header (Panda vs Clippy)
+        if (name.toLowerCase() === "clippy") {
             avatar.src = "https://yanuar-moga.github.io/assistant/assets/icons/clippy.png";
+        } else {
+            avatar.src = "https://yanuar-moga.github.io/assistant/assets/icons/panda.png";
         }
         
-        // Update Judul Header
         title.innerText = `${name.toUpperCase()} ASSISTANT`;
-        
-        // Update Gambar Widget Utama
         this.renderWidget();
         
         console.log("Persona switched to:", name);
     }
 };
 
-// Inisialisasi Engine saat halaman dimuat
 document.addEventListener('DOMContentLoaded', () => {
     AssistantEngine.init();
 });
