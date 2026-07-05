@@ -1,3 +1,6 @@
+/**
+ * PANDA ASSISTANT - Main Chat Execution Engine
+ */
 const ChatEngine = {
     init() {
         const input = document.getElementById("chat-input");
@@ -30,17 +33,21 @@ const ChatEngine = {
         const text = input.value.trim();
         if(!text) return;
 
-        this.appendMessage("User", text);
+        const msgId = "msg-" + Date.now();
+        this.appendMessage("User", text, msgId);
         input.value = "";
+        Utils.playSound("send");
         
         const flow = localStorage.getItem("panda_flow_step");
         if(flow === "WAITING_NAME") {
             localStorage.setItem("panda_user_name", text);
             localStorage.removeItem("panda_flow_step");
+            
             TypingEngine.show();
             setTimeout(() => {
                 TypingEngine.hide();
                 this.appendMessage("Assistant", `Salam kenal ${text}! Sila ketik /help untuk melihat daftar perintah pintar saya.`);
+                this.markAsRead(msgId);
                 ApiEngine.registerUser(text);
             }, 1000);
             return;
@@ -48,34 +55,49 @@ const ChatEngine = {
 
         if(text.startsWith("/")) {
             CommandEngine.execute(text);
+            this.markAsRead(msgId);
         } else {
-            this.processAiResponse(text);
+            this.processAiResponse(text, msgId);
         }
     },
 
-    appendMessage(sender, text) {
+    appendMessage(sender, text, id = "") {
         const body = document.getElementById("chat-body");
         const bubble = document.createElement("div");
         const isUser = sender === "User";
         
         bubble.className = `chat-bubble ${isUser ? 'chat-right' : 'chat-left'}`;
+        if(id) bubble.id = id;
         
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        bubble.innerHTML = `<div>${text}</div><div class="chat-time">${time} ${isUser ? '<span style="color:#34b7f1">✓✓</span>' : ''}</div>`;
+        const ticksHtml = isUser ? `<span class="chat-ticks" style="color:#888; margin-left:4px;">✓✓</span>` : '';
+        
+        bubble.innerHTML = `<div>${text}</div><div class="chat-time">${time} ${ticksHtml}</div>`;
         
         body.appendChild(bubble);
         body.scrollTop = body.scrollHeight;
+        if(!isUser) Utils.playSound("receive");
     },
 
-    async processAiResponse(prompt) {
+    markAsRead(id) {
+        if(!id) return;
+        const msgElement = document.getElementById(id);
+        if(msgElement) {
+            const ticks = msgElement.querySelector(".chat-ticks");
+            if(ticks) ticks.style.color = "#34b7f1"; 
+        }
+    },
+
+    async processAiResponse(prompt, userMsgId) {
         TypingEngine.show();
         try {
             const res = await ApiEngine.post("/chat", { prompt: prompt, user: localStorage.getItem("panda_user_name") });
             TypingEngine.hide();
+            this.markAsRead(userMsgId);
             this.appendMessage("Assistant", res.data.reply);
         } catch(e) {
             TypingEngine.hide();
-            this.appendMessage("Assistant", "Maaf, koneksi backend terputus. Silakan coba sesaat lagi.");
+            this.appendMessage("Assistant", "Maaf, koneksi backend terputus atau gagal membaca server. Silakan periksa jaringan Anda.");
         }
     }
 };
