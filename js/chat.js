@@ -1,12 +1,11 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
- * Perbaikan: Inisialisasi Otomatis Avatar & Persona pada Load
+ * Update 2026: Dynamic Command & Auto-Queue Integration
  */
 const ChatEngine = {
     SPREADSHEET_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwx1xLp3t0fgG1idoqsz9vCaEd0A3xo8N9pzcLLY8bzzjn9npvoKijXBFtOg4iekBFn1A/exec",
 
     init() {
-        // Panggil fungsi inisialisasi UI untuk memuat avatar/header tersimpan
         this.initializeUI();
 
         const input = document.getElementById("chat-input");
@@ -15,8 +14,7 @@ const ChatEngine = {
 
         btnSend.addEventListener("click", () => this.sendMessage());
         input.addEventListener("keydown", (e) => {
-            if(e.key === "Enter") this.sendMessage();
-            CommandEngine.handleInput(e);
+            if (e.key === "Enter") this.sendMessage();
         });
         btnClose.addEventListener("click", () => {
             this.appendMessage("Assistant", "Sampai jumpa lagi! ✨");
@@ -24,55 +22,86 @@ const ChatEngine = {
         });
     },
 
-    // Fungsi baru untuk memastikan avatar tampil saat pertama kali buka
     initializeUI() {
         const savedAssistant = localStorage.getItem("panda_active_assistant") || "panda";
-        // Panggil fungsi di AssistantEngine yang mengatur gambar header
         if (typeof AssistantEngine !== 'undefined' && AssistantEngine.applyPersona) {
             AssistantEngine.applyPersona(savedAssistant);
-        }
-    },
-
-    triggerGreeting() {
-        const user = localStorage.getItem("panda_user_name");
-        if (!user) {
-            this.appendMessage("Assistant", "Halo 👋 Siapa nama Anda?");
-            localStorage.setItem("panda_flow_step", "WAITING_NAME");
-        } else {
-            this.appendMessage("Assistant", `Halo ${user} 👋 Ada yang bisa saya bantu hari ini?`);
         }
     },
 
     sendMessage() {
         const input = document.getElementById("chat-input");
         const text = input.value.trim();
-        if(!text) return;
+        if (!text) return;
 
         const msgId = "msg-" + Date.now();
         this.appendMessage("User", text, msgId);
         input.value = "";
         Utils.playSound("send");
-        
+
+        // 1. Cek Flow Pendaftaran Nama
         const flow = localStorage.getItem("panda_flow_step");
-        if(flow === "WAITING_NAME") {
-            localStorage.setItem("panda_user_name", text);
-            localStorage.removeItem("panda_flow_step");
-            
-            TypingEngine.show();
-            setTimeout(() => {
-                TypingEngine.hide();
-                this.appendMessage("Assistant", `Salam kenal ${text}! Ketik /help untuk melihat perintah saya.`);
-                this.markAsRead(msgId);
-                ApiEngine.registerUser(text);
-            }, 1000);
+        if (flow === "WAITING_NAME") {
+            this.handleNameRegistration(text, msgId);
             return;
         }
 
-        if(text.startsWith("/")) {
+        // 2. Cek apakah perintah Slash
+        if (text.startsWith("/")) {
             CommandEngine.execute(text);
             this.markAsRead(msgId);
         } else {
+            // 3. Jika bukan perintah, proses sebagai FAQ
             this.processAiResponse(text, msgId);
+        }
+    },
+
+    async handleNameRegistration(text, msgId) {
+        localStorage.setItem("panda_user_name", text);
+        localStorage.removeItem("panda_flow_step");
+        TypingEngine.show();
+        setTimeout(() => {
+            TypingEngine.hide();
+            this.appendMessage("Assistant", `Salam kenal ${text}! Ketik /help untuk melihat menu perintah.`);
+            this.markAsRead(msgId);
+        }, 1000);
+    },
+
+    // Fungsi pusat untuk mengambil data dari Google Apps Script
+    async processAiResponse(prompt, userMsgId, isCommand = false) {
+        TypingEngine.show();
+        const userName = localStorage.getItem("panda_user_name") || "Guest";
+        
+        // Pilih action berdasarkan apakah ini command atau FAQ
+        const action = isCommand ? "getCommand" : "getFAQ";
+        const cleanKey = encodeURIComponent(prompt.toLowerCase().trim());
+        
+        // Logika tracking FAQ
+        let count = 1;
+        if (!isCommand) {
+            let history = JSON.parse(localStorage.getItem("panda_keyword_history")) || {};
+            history[prompt.toLowerCase().trim()] = Math.min((history[prompt.toLowerCase().trim()] || 0) + 1, 3);
+            count = history[prompt.toLowerCase().trim()];
+            localStorage.setItem("panda_keyword_history", JSON.stringify(history));
+        }
+
+        try {
+            const url = `${this.SPREADSHEET_WEB_APP_URL}?action=${action}&keyword=${cleanKey}&count=${count}&userName=${encodeURIComponent(userName)}`;
+            const response = await fetch(url);
+            const result = await response.json();
+
+            TypingEngine.hide();
+            this.markAsRead(userMsgId);
+
+            if (result.status === "success") {
+                this.appendMessage("Assistant", result.answer);
+            } else {
+                this.appendMessage("Assistant", "Maaf, saya belum mengerti itu. Pertanyaan Anda sudah dicatat untuk dipelajari nanti! 🐼");
+            }
+        } catch (e) {
+            TypingEngine.hide();
+            this.appendMessage("Assistant", "Gagal terhubung ke server.");
+            console.error("Fetch Error: ", e);
         }
     },
 
@@ -80,53 +109,48 @@ const ChatEngine = {
         const body = document.getElementById("chat-body");
         const bubble = document.createElement("div");
         const isUser = sender === "User";
-        
         bubble.className = `chat-bubble ${isUser ? 'chat-right' : 'chat-left'}`;
-        if(id) bubble.id = id;
-        
-        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        if (id) bubble.id = id;
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const ticksHtml = isUser ? `<span class="chat-ticks" style="color:#888; margin-left:4px;">✓✓</span>` : '';
-        
         bubble.innerHTML = `<div>${text}</div><div class="chat-time">${time} ${ticksHtml}</div>`;
-        
         body.appendChild(bubble);
         body.scrollTop = body.scrollHeight;
-        if(!isUser) Utils.playSound("receive");
+        if (!isUser) Utils.playSound("receive");
     },
 
     markAsRead(id) {
-        if(!id) return;
         const msgElement = document.getElementById(id);
-        if(msgElement) {
+        if (msgElement) {
             const ticks = msgElement.querySelector(".chat-ticks");
-            if(ticks) ticks.style.color = "#34b7f1";
+            if (ticks) ticks.style.color = "#34b7f1";
         }
     },
 
-    async processAiResponse(prompt, userMsgId) {
-        TypingEngine.show();
-        
-        const cleanKey = prompt.toLowerCase().trim();
-        let keywordHistory = JSON.parse(localStorage.getItem("panda_keyword_history")) || {};
-        keywordHistory[cleanKey] = Math.min((keywordHistory[cleanKey] || 0) + 1, 3);
-        localStorage.setItem("panda_keyword_history", JSON.stringify(keywordHistory));
-        
-        try {
-            const response = await fetch(`${this.SPREADSHEET_WEB_APP_URL}?action=getFAQ&keyword=${encodeURIComponent(prompt)}&count=${keywordHistory[cleanKey]}`);
-            const result = await response.json();
-            
-            TypingEngine.hide();
-            this.markAsRead(userMsgId);
-            
-            if (result.status === "success" && result.answer) {
-                this.appendMessage("Assistant", result.answer);
-            } else {
-                this.appendMessage("Assistant", "Maaf, data tidak ditemukan. 🐼");
-            }
-        } catch(e) {
-            TypingEngine.hide();
-            this.appendMessage("Assistant", "Gagal memuat data dari Spreadsheet.");
-            console.error("Fetch Error: ", e);
+    // Fungsi Lokal untuk Clear Chat
+    clearChat() {
+        const body = document.getElementById("chat-body");
+        while (body.firstChild) body.removeChild(body.firstChild);
+        this.appendMessage("Assistant", "Riwayat chat telah dibersihkan! 🐼");
+    }
+};
+
+// Command Engine untuk menangani Slash Commands
+const CommandEngine = {
+    execute(text) {
+        const cmd = text.toLowerCase().trim();
+
+        // 1. Perintah Lokal (Tidak butuh ke Server)
+        if (cmd === "/cls" || cmd === "/clear") {
+            ChatEngine.clearChat();
+        } 
+        // 2. Perintah Bantuan (Ambil dari Sheet Commands via GAS)
+        else if (cmd === "/help") {
+            ChatEngine.processAiResponse("/help", "msg-help", true); // Panggil action getHelp di GAS
+        } 
+        // 3. Perintah Lain (About, Jadwal, dll - Ambil dari Sheet Commands)
+        else {
+            ChatEngine.processAiResponse(cmd, "msg-cmd", true); // Action getCommand
         }
     }
 };
