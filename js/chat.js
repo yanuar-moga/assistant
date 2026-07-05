@@ -1,6 +1,7 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
  * Diperbarui untuk integrasi langsung dengan Google Apps Script Web App (ChatFAQ)
+ * Fitur: Pelacakan frekuensi pertanyaan bertingkat (Count 1, 2, 3) lewat LocalStorage
  */
 const ChatEngine = {
     // URL Deployment Google Apps Script Anda
@@ -99,9 +100,23 @@ const ChatEngine = {
         // Tampilkan animasi tiga titik melompat (... )
         TypingEngine.show();
         
+        // 1. Logika Tracking Riwayat Kata Kunci di Sisi Client Browser
+        const cleanKey = prompt.toLowerCase().trim();
+        let keywordHistory = JSON.parse(localStorage.getItem("panda_keyword_history")) || {};
+        
+        // Naikkan hitungan pertanyaan jika pernah ditanyakan sebelumnya (Maksimal mentok di angka 3)
+        if (keywordHistory[cleanKey]) {
+            keywordHistory[cleanKey] = Math.min(keywordHistory[cleanKey] + 1, 3);
+        } else {
+            keywordHistory[cleanKey] = 1;
+        }
+        
+        localStorage.setItem("panda_keyword_history", JSON.stringify(keywordHistory));
+        const currentCount = keywordHistory[cleanKey];
+        
         try {
-            // Request murni GET tanpa rekayasa header di client-side
-            const response = await fetch(`${this.SPREADSHEET_WEB_APP_URL}?action=getFAQ&keyword=${encodeURIComponent(prompt)}`, {
+            // Request GET murni dengan parameter keyword dan count bertingkat
+            const response = await fetch(`${this.SPREADSHEET_WEB_APP_URL}?action=getFAQ&keyword=${encodeURIComponent(prompt)}&count=${currentCount}`, {
                 method: "GET"
             });
             
