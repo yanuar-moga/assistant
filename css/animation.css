@@ -1,4 +1,29 @@
-/* Animasi Slide Up dan Roll Up */
+/* ==========================================================================
+   TYPEWRITER LOOPING EFFECT (HEADER CHAT)
+   ========================================================================= */
+.typewriter {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid #ffffff; 
+    margin: 0;
+    animation: 
+        typingEffect 4s steps(15, end) infinite alternate,
+        blinkCursor 0.75s step-end infinite;
+}
+
+@keyframes typingEffect {
+    0%, 10% { width: 0; }
+    45%, 55% { width: 100%; }
+    90%, 100% { width: 0; }
+}
+
+@keyframes blinkCursor {
+    from, to { border-color: transparent; }
+    50% { border-color: #ffffff; }
+}
+
+/* ANIMASI TRANSISI CHATBOX */
 .slide-up {
     animation: slideUpAnim 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
@@ -7,7 +32,7 @@
     to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* CRT TV Shutdown Effect */
+/* CRT TV SHUTDOWN EFFECT */
 .crt-shutdown {
     animation: crtEffect 500ms ease-out forwards;
 }
@@ -16,15 +41,4 @@
     40% { transform: scaleX(1) scaleY(0.01); filter: brightness(2); }
     80% { transform: scaleX(0) scaleY(0); filter: brightness(5); opacity: 1; }
     100% { transform: scaleX(0) scaleY(0); filter: brightness(5); opacity: 0; }
-}
-
-/* Typewriter Effect untuk Header */
-.typewriter {
-    overflow: hidden;
-    white-space: nowrap;
-    animation: typingEffect 1.5s steps(20, end);
-}
-@keyframes typingEffect {
-    from { width: 0; }
-    to { width: 100%; }
 }
