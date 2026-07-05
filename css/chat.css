@@ -1,0 +1,54 @@
+#chatbox-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 380px;
+    height: 550px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.chatbox-hidden { display: none !important; }
+.chat-header {
+    background-color: #1f4e78;
+    color: white;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header-left { display: flex; align-items: center; }
+.avatar-img { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; }
+.control-btn { background: none; border: none; color: white; cursor: pointer; font-size: 16px; margin-left: 8px; }
+.chat-body-area {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #efe7dd; /* Balon gaya WhatsApp */
+}
+.chat-bubble {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.4;
+}
+.chat-left { background: white; align-self: flex-start; float: left; clear: both; border-top-left-radius: 0; }
+.chat-right { background: #d9fdd3; align-self: flex-end; float: right; clear: both; border-top-right-radius: 0; }
+.chat-time { font-size: 10px; color: #888; text-align: right; margin-top: 4px; }
+.chat-input-bar { display: flex; padding: 10px; background: #f0f0f0; border-top: 1px solid #ddd; }
+#chat-input { flex: 1; padding: 8px 12px; border: 1px solid #ccc; border-radius: 20px; outline: none; }
+.send-btn { background: none; border: none; color: #1f4e78; margin-left: 8px; cursor: pointer; }
+.autocomplete-popup {
+    position: absolute; bottom: 60px; left: 10px; right: 10px;
+    background: white; border: 1px solid #ccc; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 1010;
+}
+.hide-popup { display: none !important; }
+.autocomplete-item { padding: 8px 12px; cursor: pointer; font-family: monospace; }
+.autocomplete-item:hover { background: #f0f0f0; }

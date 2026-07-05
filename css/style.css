@@ -1,0 +1,37 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+.fullscreen-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: radial-gradient(circle, #2e313d 0%, #1a1c23 100%);
+    background-size: cover;
+    transition: background 0.5s ease;
+}
+.assistant-character {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 150px;
+    height: 150px;
+    cursor: pointer;
+    z-index: 999;
+    transition: transform 0.3s ease;
+}
+.assistant-character img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
