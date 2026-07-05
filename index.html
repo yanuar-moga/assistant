@@ -12,7 +12,7 @@
     <meta name="theme-color" content="#1f4e78">
 </head>
 <body>
-    <div id="app-background" class="fullscreen-bg" style="background-image: url('https://apxid.github.io/assistant/assets/bg.png'); background-size: cover; background-position: center;"></div>
+    <div id="app-background" class="fullscreen-bg"></div>
 
     <div id="assistant-widget" class="assistant-character idle-animation">
         <img id="assistant-gif" src="https://apxid.github.io/assistant/assets/mypanda.gif" alt="AI Character">
@@ -22,7 +22,9 @@
         <div class="chat-header">
             <div class="header-left">
                 <img id="header-avatar" src="https://apxid.github.io/assistant/assets/panda.png" class="avatar-img" alt="Avatar">
-                <h3 id="header-title" class="typewriter">PANDA ASSISTANT</h3>
+                <div class="header-title-container">
+                    <h3 id="header-title" class="typewriter">PANDA ASSISTANT</h3>
+                </div>
             </div>
             <div class="header-right">
                 <button id="btn-minimize" class="control-btn" title="Minimize">_</button>
@@ -33,7 +35,7 @@
         <div id="chat-body" class="chat-body-area"></div>
 
         <div id="typing-indicator" class="typing-area hide-typing">
-            <span id="typing-text">Panda sedang mengetik...</span>
+            <span id="typing-text">🐼 Panda sedang mengetik...</span>
         </div>
 
         <div id="command-autocomplete" class="autocomplete-popup hide-popup"></div>
