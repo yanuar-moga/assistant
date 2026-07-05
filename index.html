@@ -12,6 +12,7 @@
     <meta name="theme-color" content="#1f4e78">
 </head>
 <body>
+
     <div id="app-background" class="fullscreen-bg"></div>
 
     <div id="assistant-widget" class="assistant-character idle-animation">
@@ -21,7 +22,7 @@
     <div id="chatbox-container" class="chatbox-hidden">
         <div class="chat-header">
             <div class="header-left">
-                <img id="header-avatar" src="https://yanuar-moga.github.io/assistant/assets/panda.png" class="avatar-img" alt="Avatar">
+                <img id="header-avatar" src="https://yanuar-moga.github.io/assistant/assets/icons/panda.png" class="avatar-img" alt="Avatar">
                 <div class="header-title-container">
                     <h3 id="header-title" class="typewriter">PANDA ASSISTANT</h3>
                 </div>
@@ -67,9 +68,11 @@
 
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then(reg => console.log('Service Worker registered:', reg.scope))
-                .catch(err => console.error('Service Worker failed:', err));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered:', reg.scope))
+                    .catch(err => console.error('Service Worker failed:', err));
+            });
         }
     </script>
 </body>
