@@ -1,7 +1,11 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
+ * Diperbarui untuk integrasi langsung dengan Google Apps Script Web App (ChatFAQ)
  */
 const ChatEngine = {
+    // URL Deployment Google Apps Script Anda
+    SPREADSHEET_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwx1xLp3t0fgG1idoqsz9vCaEd0A3xo8N9pzcLLY8bzzjn9npvoKijXBFtOg4iekBFn1A/exec",
+
     init() {
         const input = document.getElementById("chat-input");
         const btnSend = document.getElementById("btn-send");
@@ -33,6 +37,7 @@ const ChatEngine = {
         const text = input.value.trim();
         if(!text) return;
 
+        // Berikan ID unik pada pesan user untuk mengontrol status centang nantinya
         const msgId = "msg-" + Date.now();
         this.appendMessage("User", text, msgId);
         input.value = "";
@@ -57,6 +62,7 @@ const ChatEngine = {
             CommandEngine.execute(text);
             this.markAsRead(msgId);
         } else {
+            // Jalankan pencarian kata kunci ke Google Sheets
             this.processAiResponse(text, msgId);
         }
     },
@@ -70,6 +76,7 @@ const ChatEngine = {
         if(id) bubble.id = id;
         
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        // Pesan user diberi centang default abu-abu (#888)
         const ticksHtml = isUser ? `<span class="chat-ticks" style="color:#888; margin-left:4px;">✓✓</span>` : '';
         
         bubble.innerHTML = `<div>${text}</div><div class="chat-time">${time} ${ticksHtml}</div>`;
@@ -84,20 +91,41 @@ const ChatEngine = {
         const msgElement = document.getElementById(id);
         if(msgElement) {
             const ticks = msgElement.querySelector(".chat-ticks");
-            if(ticks) ticks.style.color = "#34b7f1"; 
+            if(ticks) ticks.style.color = "#34b7f1"; // Berubah warna biru khas WhatsApp
         }
     },
 
     async processAiResponse(prompt, userMsgId) {
+        // Tampilkan animasi tiga titik melompat (... )
         TypingEngine.show();
+        
         try {
-            const res = await ApiEngine.post("/chat", { prompt: prompt, user: localStorage.getItem("panda_user_name") });
+            // Melakukan HTTP Request GET ke Google Apps Script Web App Anda
+            const response = await fetch(`${this.SPREADSHEET_WEB_APP_URL}?action=getFAQ&keyword=${encodeURIComponent(prompt)}`);
+            
+            if (!response.ok) {
+                throw new Error("Gagal mengambil data dari Google Apps Script");
+            }
+            
+            const result = await response.json();
+            
+            // Sembunyikan animasi loading setelah respons diterima
             TypingEngine.hide();
+            
+            // Berhasil terhubung ke server -> Ubah centang abu menjadi biru
             this.markAsRead(userMsgId);
-            this.appendMessage("Assistant", res.data.reply);
+            
+            // Memeriksa status dan ketersediaan data answer dari sheet ChatFAQ
+            if (result.status === "success" && result.answer) {
+                this.appendMessage("Assistant", result.answer);
+            } else {
+                this.appendMessage("Assistant", "Maaf, kata kunci tidak ditemukan dalam database ChatFAQ Panda. Coba gunakan pertanyaan atau perintah lain.");
+            }
         } catch(e) {
+            // Penanganan jika jaringan komputer/hosting putus
             TypingEngine.hide();
-            this.appendMessage("Assistant", "Maaf, koneksi backend terputus atau gagal membaca server. Silakan periksa jaringan Anda.");
+            this.appendMessage("Assistant", "Maaf, koneksi ke database Spreadsheet terputus atau gagal membaca server. Silakan periksa jaringan Anda.");
+            console.error("Apps Script Integration Error: ", e);
         }
     }
 };
