@@ -1,0 +1,30 @@
+/* Animasi Slide Up dan Roll Up */
+.slide-up {
+    animation: slideUpAnim 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+@keyframes slideUpAnim {
+    from { transform: translateY(100%) scale(0.9); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* CRT TV Shutdown Effect */
+.crt-shutdown {
+    animation: crtEffect 500ms ease-out forwards;
+}
+@keyframes crtEffect {
+    0% { transform: scale(1); filter: brightness(1); }
+    40% { transform: scaleX(1) scaleY(0.01); filter: brightness(2); }
+    80% { transform: scaleX(0) scaleY(0); filter: brightness(5); opacity: 1; }
+    100% { transform: scaleX(0) scaleY(0); filter: brightness(5); opacity: 0; }
+}
+
+/* Typewriter Effect untuk Header */
+.typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typingEffect 1.5s steps(20, end);
+}
+@keyframes typingEffect {
+    from { width: 0; }
+    to { width: 100%; }
+}
