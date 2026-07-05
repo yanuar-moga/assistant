@@ -1,5 +1,5 @@
 /* ==========================================================================
-   TYPEWRITER LOOPING EFFECT (HEADER CHAT)
+   TYPEWRITER LOOPING EFFECT (HEADER CHAT) - FIXED INSTANT RESET
    ========================================================================= */
 .typewriter {
     display: inline-block;
@@ -7,15 +7,19 @@
     white-space: nowrap;
     border-right: 2px solid #ffffff; 
     margin: 0;
+    /* MEMBUANG 'alternate' agar tidak menghapus ke belakang, menggunakan 'infinite' murni */
     animation: 
-        typingEffect 4s steps(15, end) infinite alternate,
+        typingEffect 4s steps(20, end) infinite,
         blinkCursor 0.75s step-end infinite;
 }
 
 @keyframes typingEffect {
-    0%, 10% { width: 0; }
-    45%, 55% { width: 100%; }
-    90%, 100% { width: 0; }
+    0% { width: 0; }
+    /* Proses mengetik maju dari 0% ke 40% */
+    40%, 85% { width: 100%; } 
+    /* Teks diam mempertahankan posisi penuh dari 40% hingga 85% */
+    90%, 100% { width: 0; } 
+    /* Detik-detik akhir (85% ke 90%) langsung amblas ke 0 secara instan tanpa kelihatan mundur panjang */
 }
 
 @keyframes blinkCursor {
@@ -23,7 +27,9 @@
     50% { border-color: #ffffff; }
 }
 
-/* ANIMASI TRANSISI CHATBOX */
+/* ==========================================================================
+   ANIMASI TRANSISI CHATBOX (TETAP SAMA)
+   ========================================================================= */
 .slide-up {
     animation: slideUpAnim 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
@@ -32,7 +38,9 @@
     to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* CRT TV SHUTDOWN EFFECT */
+/* ==========================================================================
+   CRT TV SHUTDOWN EFFECT (TETAP SAMA)
+   ========================================================================= */
 .crt-shutdown {
     animation: crtEffect 500ms ease-out forwards;
 }
