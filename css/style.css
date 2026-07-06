@@ -1,19 +1,30 @@
 /* ==========================================================================
    1. RESET & BASE STYLES
    ========================================================================== */
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after { 
+    box-sizing: border-box; 
+}
+
 html, body {
-    margin: 0; padding: 0; width: 100%; height: 100%;
-    overflow: hidden; font-family: Arial, sans-serif;
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    height: 100%;
+    overflow: hidden; 
+    font-family: Arial, sans-serif;
     -webkit-tap-highlight-color: transparent;
 }
 
 /* ==========================================================================
-   2. FULLSCREEN BACKGROUND (Cerah)
+   2. FULLSCREEN BACKGROUND (Cerah & Responsif)
    ========================================================================== */
 .fullscreen-bg {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: -1;
     background-image: url("https://apxid.github.io/assistant/assets/bg.png");
     background-size: cover;
     background-position: center center;
@@ -23,20 +34,38 @@ html, body {
 }
 
 /* ==========================================================================
-   3. ASSISTANT CHARACTER WIDGET (Responsif HP)
+   3. ASSISTANT CHARACTER WIDGET (Perbaikan Posisi di HP)
    ========================================================================== */
 .assistant-character {
     position: fixed;
-    bottom: 20px; right: 20px;
-    width: 150px; height: 150px;
-    cursor: pointer; z-index: 999;
+    bottom: 20px; 
+    right: 20px;
+    width: 150px; 
+    height: 150px;
+    cursor: pointer; 
+    z-index: 999;
     transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.assistant-character:hover { transform: scale(1.05); }
-.assistant-character img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.assistant-character:hover { 
+    transform: scale(1.05); 
+}
 
-/* Media Query HP */
+.assistant-character img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    pointer-events: none; 
+}
+
+/* Media Query untuk HP (Lebih agresif ke kanan agar tidak menutupi tengah) */
 @media (max-width: 600px) {
-    .assistant-character { width: 100px; height: 100px; bottom: 10px; right: 10px; }
+    .assistant-character { 
+        width: 90px; 
+        height: 90px; 
+        bottom: 10px; 
+        /* Menggeser panda ke luar sisi kanan agar tidak menutupi pemandangan */
+        right: -15px; 
+        transform: scale(0.9);
+    }
 }
