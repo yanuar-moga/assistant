@@ -1,6 +1,6 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
- * Final Version: Fixed Close-Loop Duplication & Auto-Formatted UI
+ * Final Version: Fixed Greeting Loop, Close Duplication & Auto-Formatted UI
  */
 
 const ChatEngine = {
@@ -14,13 +14,11 @@ const ChatEngine = {
         const btnClose = document.getElementById("btn-close");
 
         if (btnSend) btnSend.onclick = () => this.sendMessage();
-        
         if (input) {
             input.onkeydown = (e) => {
                 if (e.key === "Enter") this.sendMessage();
             };
         }
-        
         if (btnClose) {
             btnClose.onclick = () => {
                 if (this.isClosing) return;
@@ -44,7 +42,6 @@ const ChatEngine = {
     triggerGreeting() {
         const body = document.getElementById("chat-body");
         if (body && body.children.length > 0) return;
-
         const user = localStorage.getItem("panda_user_name");
         
         TypingEngine.show();
@@ -63,7 +60,6 @@ const ChatEngine = {
         const input = document.getElementById("chat-input");
         const text = input.value.trim();
         if (!text) return;
-        
         const msgId = "msg-" + Date.now();
         this.appendMessage("User", text, msgId);
         input.value = "";
@@ -117,7 +113,12 @@ const ChatEngine = {
             this.markAsRead(userMsgId);
             
             if (result.status === "success") {
-                this.appendMessage("Assistant", result.answer);
+                // Terapkan perapian teks di sini sebelum ditampilkan
+                let finalAnswer = result.answer;
+                if (isCommand) {
+                    finalAnswer = finalAnswer.replace(/ • /g, "<br>• ");
+                }
+                this.appendMessage("Assistant", finalAnswer);
             } else {
                 this.appendMessage("Assistant", "Maaf, data tidak ditemukan.");
             }
@@ -132,9 +133,6 @@ const ChatEngine = {
         const body = document.getElementById("chat-body");
         if (!body) return;
         
-        // AUTO-FORMAT: Jika teks mengandung simbol •, kita tambahkan line break
-        let formattedText = text.replace(/ • /g, "<br>• ");
-        
         const bubble = document.createElement("div");
         const isUser = sender === "User";
         bubble.className = "chat-bubble " + (isUser ? 'chat-right' : 'chat-left');
@@ -142,7 +140,7 @@ const ChatEngine = {
         
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const ticks = isUser ? '<span class="chat-ticks" style="color:#888; margin-left:4px;">✓✓</span>' : '';
-        bubble.innerHTML = "<div>" + formattedText + "</div><div class='chat-time'>" + time + ticks + "</div>";
+        bubble.innerHTML = "<div>" + text + "</div><div class='chat-time'>" + time + ticks + "</div>";
         
         body.appendChild(bubble);
         body.scrollTop = body.scrollHeight;
