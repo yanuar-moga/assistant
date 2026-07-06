@@ -2,60 +2,41 @@
    1. RESET & BASE STYLES
    ========================================================================== */
 *, *::before, *::after { box-sizing: border-box; }
-
 html, body {
     margin: 0; padding: 0; width: 100%; height: 100%;
     overflow: hidden; font-family: Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* ==========================================================================
-   2. FULLSCREEN BACKGROUND (ZOOM-CLEAN VERSION)
+   2. FULLSCREEN BACKGROUND (Cerah)
    ========================================================================== */
 .fullscreen-bg {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
     background-image: url("https://apxid.github.io/assistant/assets/bg.png");
-    
-    /* Gunakan 'cover' agar tetap memenuhi seluruh layar tanpa putih-putih */
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    
-    /* Trik Zoom: Menggunakan transform untuk memperbesar view tanpa merusak layout */
-    transform: scale(1.2); 
-    transform-origin: center center;
+    background-attachment: fixed;
+    transition: background 0.5s ease;
 }
 
 /* ==========================================================================
-   3. ASSISTANT CHARACTER WIDGET
+   3. ASSISTANT CHARACTER WIDGET (Responsif HP)
    ========================================================================== */
 .assistant-character {
     position: fixed;
     bottom: 20px; right: 20px;
     width: 150px; height: 150px;
-    cursor: pointer; z-index: 100;
-    transition: transform 0.3s ease;
+    cursor: pointer; z-index: 999;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .assistant-character:hover { transform: scale(1.05); }
+.assistant-character img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 
-.assistant-character img { 
-    width: 100%; height: 100%; object-fit: contain; pointer-events: none; 
-}
-
-/* ==========================================================================
-   4. MEDIA QUERY (HP)
-   ========================================================================== */
+/* Media Query HP */
 @media (max-width: 600px) {
-    .fullscreen-bg {
-        /* Zoom lebih dalam untuk menghilangkan panda besar di pojok */
-        transform: scale(2.0); 
-        /* Geser fokus ke atas agar bagian bawah yang ada panda besar terbuang */
-        transform-origin: 30% 20%; 
-    }
-
-    .assistant-character { 
-        width: 80px; height: 80px; 
-        bottom: 10px; right: 10px;
-    }
+    .assistant-character { width: 100px; height: 100px; bottom: 10px; right: 10px; }
 }
