@@ -1,6 +1,6 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
- * Versi Clean & Consolidated (Gunakan ini untuk replace total)
+ * Final Consolidated Version (Sapaan & Persona Integration)
  */
 
 const ChatEngine = {
@@ -13,13 +13,13 @@ const ChatEngine = {
         const btnSend = document.getElementById("btn-send");
         const btnClose = document.getElementById("btn-close");
 
-        if(btnSend) btnSend.addEventListener("click", () => this.sendMessage());
-        if(input) {
+        if (btnSend) btnSend.addEventListener("click", () => this.sendMessage());
+        if (input) {
             input.addEventListener("keydown", (e) => {
                 if (e.key === "Enter") this.sendMessage();
             });
         }
-        if(btnClose) {
+        if (btnClose) {
             btnClose.addEventListener("click", () => {
                 this.appendMessage("Assistant", "Sampai jumpa lagi! ✨");
                 setTimeout(() => AssistantEngine.deactivateChatbox(), 1000);
@@ -31,6 +31,16 @@ const ChatEngine = {
         const savedAssistant = localStorage.getItem("panda_active_assistant") || "panda";
         if (typeof AssistantEngine !== 'undefined' && AssistantEngine.applyPersona) {
             AssistantEngine.applyPersona(savedAssistant);
+        }
+    },
+
+    triggerGreeting() {
+        const user = localStorage.getItem("panda_user_name");
+        if (!user) {
+            this.appendMessage("Assistant", "Halo 👋 Siapa nama Anda?");
+            localStorage.setItem("panda_flow_step", "WAITING_NAME");
+        } else {
+            this.appendMessage("Assistant", `Halo ${user} 👋 Senang bertemu Anda lagi! Ada yang bisa saya bantu?`);
         }
     },
 
@@ -51,7 +61,6 @@ const ChatEngine = {
         }
 
         if (text.startsWith("/")) {
-            // Memanggil CommandEngine yang didefinisikan di bawah
             CommandEngine.execute(text);
             this.markAsRead(msgId);
         } else {
@@ -136,12 +145,32 @@ const ChatEngine = {
 const CommandEngine = {
     execute(text) {
         const cmd = text.toLowerCase().trim();
+
         if (cmd === "/cls" || cmd === "/clear") {
             ChatEngine.clearChat();
-        } else if (cmd === "/help") {
+        } 
+        else if (cmd.startsWith("/assistant")) {
+            const name = cmd.replace("/assistant", "").trim();
+            if (name === "clippy" || name === "panda") {
+                AssistantEngine.switchPersona(name);
+                ChatEngine.appendMessage("Assistant", `Persona berhasil diubah ke: ${name.toUpperCase()}! 🐼`);
+            } else {
+                ChatEngine.appendMessage("Assistant", "Format salah. Gunakan: /assistant clippy atau /assistant panda");
+            }
+        }
+        else if (cmd === "/help") {
             ChatEngine.processAiResponse("/help", "msg-help", true);
-        } else {
+        } 
+        else {
             ChatEngine.processAiResponse(cmd, "msg-cmd", true);
         }
     }
 };
+
+// Auto-Trigger saat aplikasi dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    ChatEngine.init();
+    setTimeout(() => {
+        ChatEngine.triggerGreeting();
+    }, 500);
+});
