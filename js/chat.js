@@ -1,6 +1,7 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
- * Final Version: Fixed Greeting Loop, Close Duplication & Auto-Formatted UI
+ * Version: 1.0 | Build: 5 Juli 2026
+ * Final Version: PWA Installed & Chat Execution Engine
  */
 
 const ChatEngine = {
@@ -47,11 +48,16 @@ const ChatEngine = {
         TypingEngine.show();
         setTimeout(() => {
             TypingEngine.hide();
+            const versionInfo = "<div style='font-size:0.8em; color:#888; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px;'>" +
+                                "<b>Panda Assistant</b><br>" +
+                                "Version 1.0 | Build 5 Juli 2026 | Dev MB" +
+                                "</div>";
+
             if (!user) {
-                this.appendMessage("Assistant", "👋 Halo! Selamat datang. Senang sekali bisa bertemu denganmu. 😊<br><br>Aku adalah Asisten Virtual yang siap membantu menjawab pertanyaanmu. Siapa namamu?");
+                this.appendMessage("Assistant", versionInfo + "👋 Halo! Selamat datang. Senang sekali bisa bertemu denganmu. 😊<br><br>Aku adalah Asisten Virtual yang siap membantu menjawab pertanyaanmu. Siapa namamu?");
                 localStorage.setItem("panda_flow_step", "WAITING_NAME");
             } else {
-                this.appendMessage("Assistant", "Halo kembali, " + user + "! 👋 Senang sekali bisa bertemu denganmu lagi. Ada yang bisa kubantu hari ini? 😊");
+                this.appendMessage("Assistant", versionInfo + "Halo kembali, " + user + "! 👋 Senang sekali bisa bertemu denganmu lagi. Ada yang bisa kubantu hari ini? 😊");
             }
         }, 800);
     },
@@ -113,7 +119,6 @@ const ChatEngine = {
             this.markAsRead(userMsgId);
             
             if (result.status === "success") {
-                // LOGIKA AGRESIF: Ganti SEMUA simbol • dengan <br>•
                 let finalAnswer = result.answer.replace(/•/g, "<br>•");
                 this.appendMessage("Assistant", finalAnswer);
             } else {
@@ -177,6 +182,27 @@ const CommandEngine = {
         }
     }
 };
+
+/** PWA Installation Logic **/
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('btn-install');
+    if(btn) btn.style.display = 'block';
+});
+
+document.getElementById('btn-install')?.addEventListener('click', () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install');
+            }
+            deferredPrompt = null;
+        });
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     ChatEngine.init();
