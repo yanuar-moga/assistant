@@ -1,0 +1,20 @@
+{
+  "name": "Panda Assistant",
+  "short_name": "Panda",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#003366",
+  "icons": [
+    {
+      "src": "https://yanuar-moga.github.io/assistant/assets/icons/icopanda.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://yanuar-moga.github.io/assistant/assets/icons/icopanda.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
