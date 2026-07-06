@@ -1,3 +1,8 @@
+/**
+ * PANDA ASSISTANT - Main Chat Execution Engine
+ * Final Version: Refined Greeting Logic & Single-Trigger Flow
+ */
+
 const ChatEngine = {
     SPREADSHEET_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwx1xLp3t0fgG1idoqsz9vCaEd0A3xo8N9pzcLLY8bzzjn9npvoKijXBFtOg4iekBFn1A/exec",
 
@@ -29,8 +34,13 @@ const ChatEngine = {
     },
 
     triggerGreeting() {
+        const body = document.getElementById("chat-body");
+        // Mencegah greeting muncul 2x jika chat sudah ada isinya
+        if (body && body.children.length > 0) return;
+
         const user = localStorage.getItem("panda_user_name");
         const assistantName = AssistantEngine.current || "Panda";
+        
         TypingEngine.show();
         setTimeout(() => {
             TypingEngine.hide();
@@ -40,7 +50,6 @@ const ChatEngine = {
             } else {
                 this.appendMessage("Assistant", "Halo kembali, " + user + "! Senang sekali bisa membantu Anda hari ini.");
             }
-            this.appendMessage("Assistant", "Tips: Ketik /help untuk melihat daftar perintah.");
         }, 800);
     },
 
@@ -48,15 +57,18 @@ const ChatEngine = {
         const input = document.getElementById("chat-input");
         const text = input.value.trim();
         if (!text) return;
+        
         const msgId = "msg-" + Date.now();
         this.appendMessage("User", text, msgId);
         input.value = "";
         Utils.playSound("send");
+
         const flow = localStorage.getItem("panda_flow_step");
         if (flow === "WAITING_NAME") {
             this.handleNameRegistration(text, msgId);
             return;
         }
+
         if (text.startsWith("/")) {
             CommandEngine.execute(text);
             this.markAsRead(msgId);
@@ -81,6 +93,7 @@ const ChatEngine = {
         const userName = localStorage.getItem("panda_user_name") || "Guest";
         const action = isCommand ? "getCommand" : "getFAQ";
         const cleanKey = encodeURIComponent(prompt.toLowerCase().trim());
+        
         let count = 1;
         if (!isCommand) {
             let history = JSON.parse(localStorage.getItem("panda_keyword_history")) || {};
@@ -88,12 +101,15 @@ const ChatEngine = {
             count = history[prompt.toLowerCase().trim()];
             localStorage.setItem("panda_keyword_history", JSON.stringify(history));
         }
+        
         try {
             const url = this.SPREADSHEET_WEB_APP_URL + "?action=" + action + "&keyword=" + cleanKey + "&count=" + count + "&userName=" + encodeURIComponent(userName);
             const response = await fetch(url);
             const result = await response.json();
+            
             TypingEngine.hide();
             this.markAsRead(userMsgId);
+            
             if (result.status === "success") {
                 this.appendMessage("Assistant", result.answer);
             } else {
@@ -102,17 +118,23 @@ const ChatEngine = {
         } catch (e) {
             TypingEngine.hide();
             this.appendMessage("Assistant", "Gagal terhubung ke server.");
+            console.error(e);
         }
     },
 
     appendMessage(sender, text, id = "") {
         const body = document.getElementById("chat-body");
+        if (!body) return;
+        
         const bubble = document.createElement("div");
         const isUser = sender === "User";
         bubble.className = "chat-bubble " + (isUser ? 'chat-right' : 'chat-left');
         if (id) bubble.id = id;
+        
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        bubble.innerHTML = "<div>" + text + "</div><div class='chat-time'>" + time + "</div>";
+        const ticks = isUser ? '<span class="chat-ticks" style="color:#888; margin-left:4px;">✓✓</span>' : '';
+        bubble.innerHTML = "<div>" + text + "</div><div class='chat-time'>" + time + ticks + "</div>";
+        
         body.appendChild(bubble);
         body.scrollTop = body.scrollHeight;
         if (!isUser) Utils.playSound("receive");
