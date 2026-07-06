@@ -1,30 +1,24 @@
 /**
  * PANDA ASSISTANT - Core Assistant Persona Engine
- * Final Version: Full Sync with Auto-Load and Header UI
+ * Final Version: Refined for Single Greeting & Persona Sync
  */
 
 const AssistantEngine = {
     current: "Panda",
 
     async init() {
-        // Ambil data persona yang tersimpan (default ke "panda")
         const saved = localStorage.getItem("panda_assistant_persona") || "panda";
         this.current = saved;
         
-        // Render widget di pojok layar
         this.renderWidget();
-        
-        // Sinkronisasi header chatbox agar tidak ikon rusak
         this.loadPersona();
         
-        // Event listener untuk klik widget
         const widget = document.getElementById("assistant-widget");
         if (widget) {
             widget.addEventListener("click", () => this.activateChatbox());
         }
     },
 
-    // Fungsi untuk memastikan avatar header sesuai dengan pilihan user saat load
     loadPersona() {
         const avatar = document.getElementById("header-avatar");
         const title = document.getElementById("header-title");
@@ -61,10 +55,8 @@ const AssistantEngine = {
             chatbox.classList.add("slide-up");
         }
         
-        // Panggil trigger greeting jika ChatEngine sudah tersedia
-        if (typeof ChatEngine !== 'undefined') {
-            ChatEngine.triggerGreeting();
-        }
+        // PENTING: Pemanggilan ChatEngine.triggerGreeting() dihapus dari sini
+        // agar sapaan hanya dikelola di chat.js saat DOMContentLoaded.
     },
 
     deactivateChatbox() {
@@ -87,7 +79,6 @@ const AssistantEngine = {
         this.current = name;
         localStorage.setItem("panda_assistant_persona", name);
         
-        // Update tampilan header
         const avatar = document.getElementById("header-avatar");
         const title = document.getElementById("header-title");
         
@@ -101,16 +92,13 @@ const AssistantEngine = {
         }
         
         this.renderWidget();
-        console.log("Persona switched to:", name);
     },
 
-    // Alias untuk kecocokan kode lama jika dipanggil dari luar
     applyPersona(name) {
         this.switchPersona(name);
     }
 };
 
-// Inisialisasi engine saat DOM siap
 document.addEventListener('DOMContentLoaded', () => {
     AssistantEngine.init();
 });
