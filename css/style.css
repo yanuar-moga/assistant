@@ -16,7 +16,7 @@ html, body {
 }
 
 /* ==========================================================================
-   2. FULLSCREEN BACKGROUND (Cerah & Responsif)
+   2. FULLSCREEN BACKGROUND
    ========================================================================== */
 .fullscreen-bg {
     position: fixed;
@@ -30,11 +30,10 @@ html, body {
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    transition: background 0.5s ease;
 }
 
 /* ==========================================================================
-   3. ASSISTANT CHARACTER WIDGET (Perbaikan Posisi di HP)
+   3. ASSISTANT CHARACTER WIDGET
    ========================================================================== */
 .assistant-character {
     position: fixed;
@@ -55,17 +54,19 @@ html, body {
     width: 100%; 
     height: 100%; 
     object-fit: contain; 
-    pointer-events: none; 
 }
 
-/* Media Query untuk HP (Lebih agresif ke kanan agar tidak menutupi tengah) */
+/* Media Query untuk HP (Aggressive Positioning) */
 @media (max-width: 600px) {
     .assistant-character { 
-        width: 90px; 
-        height: 90px; 
-        bottom: 10px; 
-        /* Menggeser panda ke luar sisi kanan agar tidak menutupi pemandangan */
-        right: -15px; 
-        transform: scale(0.9);
+        width: 120px;      /* Ukuran sedikit lebih besar agar resolusi tajam */
+        height: 120px; 
+        bottom: 0px;       /* Tempel bawah */
+        
+        /* Menggeser keluar layar secara agresif */
+        right: -45px;      
+        
+        /* Memotong area visual yang tidak perlu agar tidak terlihat di layar */
+        clip-path: inset(0px 20px 0px 0px); 
     }
 }
