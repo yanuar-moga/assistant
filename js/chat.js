@@ -1,6 +1,6 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
- * Final Version: Refined Greeting Logic & Single-Trigger Flow
+ * Final Version: Refined Greeting & Cleaned UI Controllers
  */
 
 const ChatEngine = {
@@ -18,6 +18,8 @@ const ChatEngine = {
                 if (e.key === "Enter") this.sendMessage();
             });
         }
+        
+        // Hanya menangani tombol Close, btn-minimize sudah dihapus
         if (btnClose) {
             btnClose.addEventListener("click", () => {
                 this.appendMessage("Assistant", "Sampai jumpa lagi! ✨");
@@ -39,16 +41,15 @@ const ChatEngine = {
         if (body && body.children.length > 0) return;
 
         const user = localStorage.getItem("panda_user_name");
-        const assistantName = AssistantEngine.current || "Panda";
         
         TypingEngine.show();
         setTimeout(() => {
             TypingEngine.hide();
             if (!user) {
-                this.appendMessage("Assistant", "Halo! Selamat datang di asisten AI saya. Saya " + assistantName + ", asisten pribadi Anda. Siapa nama Anda?");
+                this.appendMessage("Assistant", "👋 Halo! Selamat datang. Senang sekali bisa bertemu denganmu. 😊<br><br>Aku adalah Asisten Virtual yang siap membantu menjawab pertanyaanmu. Siapa namamu?");
                 localStorage.setItem("panda_flow_step", "WAITING_NAME");
             } else {
-                this.appendMessage("Assistant", "Halo kembali, " + user + "! Senang sekali bisa membantu Anda hari ini.");
+                this.appendMessage("Assistant", "Halo kembali, " + user + "! 👋 Senang sekali bisa bertemu denganmu lagi. Ada yang bisa kubantu hari ini? 😊");
             }
         }, 800);
     },
@@ -83,7 +84,7 @@ const ChatEngine = {
         TypingEngine.show();
         setTimeout(() => {
             TypingEngine.hide();
-            this.appendMessage("Assistant", "Salam kenal " + text + "! Ketik /help untuk menu perintah.");
+            this.appendMessage("Assistant", "Salam kenal " + text + "! Senang bisa membantumu. Ketik /help untuk melihat menu perintah.");
             this.markAsRead(msgId);
         }, 1000);
     },
