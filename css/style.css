@@ -1,28 +1,40 @@
 /* ==========================================================================
    1. RESET & BASE STYLES
    ========================================================================== */
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after { 
+    box-sizing: border-box; 
+}
+
 html, body {
-    margin: 0; padding: 0; width: 100%; height: 100%;
-    overflow: hidden; font-family: Arial, sans-serif;
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    height: 100%;
+    overflow: hidden; 
+    font-family: Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* ==========================================================================
-   2. FULLSCREEN BACKGROUND (Dibuat benar-benar statis/diam)
+   2. FULLSCREEN BACKGROUND
    ========================================================================== */
 .fullscreen-bg {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: -1;
+    /* PASTIKAN GAMBAR INI HANYA PEMANDANGAN, TANPA ADA PANDA BESAR */
     background-image: url("https://apxid.github.io/assistant/assets/bg.png");
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    /* Menghindari pergeseran saat ada elemen lain */
-    background-attachment: fixed; 
+    background-attachment: fixed;
 }
 
 /* ==========================================================================
-   3. ASSISTANT CHARACTER WIDGET (Dibuat independen)
+   3. ASSISTANT CHARACTER WIDGET
    ========================================================================== */
 .assistant-character {
     position: fixed;
@@ -31,22 +43,31 @@ html, body {
     width: 150px; 
     height: 150px;
     cursor: pointer; 
-    z-index: 100; /* Z-index lebih tinggi agar tidak terpengaruh background */
+    z-index: 100;
     transition: transform 0.3s ease;
 }
 
-/* Media Query Khusus HP */
+.assistant-character:hover {
+    transform: scale(1.05);
+}
+
+.assistant-character img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    pointer-events: none; 
+}
+
+/* ==========================================================================
+   4. MEDIA QUERY (HP)
+   ========================================================================== */
 @media (max-width: 600px) {
     .assistant-character { 
         width: 80px; 
         height: 80px; 
         bottom: 10px; 
-        /* Kita ganti dari 'right' ke 'margin-right' agar tidak menggeser layout */
-        margin-right: 5px; 
-        right: 0; 
+        right: 10px;
+        /* Memastikan posisi panda menempel di pojok tanpa menggeser elemen lain */
+        margin: 0;
     }
-}
-
-.assistant-character img { 
-    width: 100%; height: 100%; object-fit: contain; pointer-events: none; 
 }
