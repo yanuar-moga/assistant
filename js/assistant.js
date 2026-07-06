@@ -1,26 +1,27 @@
 /**
  * PANDA ASSISTANT - Core Assistant Persona Engine
- * Updated for Yanuar-Moga Assets (Auto-Load Support)
+ * Final Version: Full Sync with Auto-Load and Header UI
  */
+
 const AssistantEngine = {
     current: "Panda",
 
     async init() {
-        // Ambil data persona yang tersimpan (jika ada)
-        const saved = localStorage.getItem("panda_assistant_persona");
-        if (saved) {
-            this.current = saved;
-        }
+        // Ambil data persona yang tersimpan (default ke "panda")
+        const saved = localStorage.getItem("panda_assistant_persona") || "panda";
+        this.current = saved;
         
         // Render widget di pojok layar
         this.renderWidget();
         
-        // Muat avatar di header chatbox agar tidak muncul ikon rusak saat pertama buka
+        // Sinkronisasi header chatbox agar tidak ikon rusak
         this.loadPersona();
         
-        document.getElementById("assistant-widget").addEventListener("click", () => {
-            this.activateChatbox();
-        });
+        // Event listener untuk klik widget
+        const widget = document.getElementById("assistant-widget");
+        if (widget) {
+            widget.addEventListener("click", () => this.activateChatbox());
+        }
     },
 
     // Fungsi untuk memastikan avatar header sesuai dengan pilihan user saat load
@@ -53,12 +54,14 @@ const AssistantEngine = {
         const widget = document.getElementById("assistant-widget");
         const chatbox = document.getElementById("chatbox-container");
         
-        widget.style.display = "none";
-        chatbox.classList.remove("chatbox-hidden");
-        chatbox.classList.remove("crt-shutdown");
-        chatbox.classList.add("slide-up");
+        if (widget) widget.style.display = "none";
+        if (chatbox) {
+            chatbox.classList.remove("chatbox-hidden");
+            chatbox.classList.remove("crt-shutdown");
+            chatbox.classList.add("slide-up");
+        }
         
-        // Panggil trigger greeting jika ChatEngine sudah siap
+        // Panggil trigger greeting jika ChatEngine sudah tersedia
         if (typeof ChatEngine !== 'undefined') {
             ChatEngine.triggerGreeting();
         }
@@ -68,12 +71,14 @@ const AssistantEngine = {
         const chatbox = document.getElementById("chatbox-container");
         const widget = document.getElementById("assistant-widget");
         
-        chatbox.classList.remove("slide-up");
-        chatbox.classList.add("crt-shutdown");
+        if (chatbox) {
+            chatbox.classList.remove("slide-up");
+            chatbox.classList.add("crt-shutdown");
+        }
         
         setTimeout(() => {
-            chatbox.classList.add("chatbox-hidden");
-            widget.style.display = "block";
+            if (chatbox) chatbox.classList.add("chatbox-hidden");
+            if (widget) widget.style.display = "block";
             this.renderWidget();
         }, 500);
     },
@@ -97,6 +102,11 @@ const AssistantEngine = {
         
         this.renderWidget();
         console.log("Persona switched to:", name);
+    },
+
+    // Alias untuk kecocokan kode lama jika dipanggil dari luar
+    applyPersona(name) {
+        this.switchPersona(name);
     }
 };
 
