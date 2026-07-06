@@ -1,41 +1,27 @@
 /* ==========================================================================
    1. RESET & BASE STYLES
    ========================================================================== */
-*, *::before, *::after { 
-    box-sizing: border-box; 
-}
+*, *::before, *::after { box-sizing: border-box; }
 
 html, body {
-    margin: 0; 
-    padding: 0; 
-    width: 100%; 
-    height: 100%;
-    overflow: hidden; 
-    font-family: Arial, sans-serif;
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; font-family: Arial, sans-serif;
     -webkit-tap-highlight-color: transparent;
 }
 
 /* ==========================================================================
-   2. FULLSCREEN BACKGROUND (ZOOM VERSION)
+   2. FULLSCREEN BACKGROUND (STABLE VERSION)
    ========================================================================== */
 .fullscreen-bg {
     position: fixed;
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    z-index: -1;
+    top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
     background-image: url("https://apxid.github.io/assistant/assets/bg.png");
-    
-    /* Trik Zoom: 
-       Memperbesar gambar 180% agar area kanan bawah (Panda besar) 
-       keluar dari batas layar dan terpotong secara otomatis.
-    */
-    background-size: 180% auto; 
-    /* Menggeser fokus gambar agar area bersih (kiri-atas) lebih dominan */
-    background-position: 25% 30%; 
+    /* Gunakan cover agar selalu 100% layar */
+    background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    /* Ubah ke scroll agar lebih kompatibel di semua HP */
+    background-attachment: scroll;
 }
 
 /* ==========================================================================
@@ -43,41 +29,31 @@ html, body {
    ========================================================================== */
 .assistant-character {
     position: fixed;
-    bottom: 20px; 
-    right: 20px;
-    width: 150px; 
-    height: 150px;
-    cursor: pointer; 
-    z-index: 100;
+    bottom: 20px; right: 20px;
+    width: 150px; height: 150px;
+    cursor: pointer; z-index: 100;
     transition: transform 0.3s ease;
 }
 
-.assistant-character:hover {
-    transform: scale(1.05);
-}
+.assistant-character:hover { transform: scale(1.05); }
 
 .assistant-character img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: contain; 
-    pointer-events: none; 
+    width: 100%; height: 100%; object-fit: contain; pointer-events: none; 
 }
 
 /* ==========================================================================
-   4. MEDIA QUERY (HP - Penyesuaian Zoom)
+   4. MEDIA QUERY (HP - FIX FULLSCREEN ZOOM)
    ========================================================================== */
 @media (max-width: 600px) {
-    /* Menyesuaikan zoom agar di HP tetap fokus ke area bersih */
     .fullscreen-bg {
-        background-size: 250% auto; 
-        background-position: 30% 40%;
+        /* Kita manipulasi container agar gambar ter-zoom tapi tetap 100% layar */
+        background-size: 250%; 
+        background-position: 30% 50%;
     }
 
     .assistant-character { 
-        width: 80px; 
-        height: 80px; 
-        bottom: 10px; 
-        right: 10px;
+        width: 80px; height: 80px; 
+        bottom: 10px; right: 10px;
         margin: 0;
     }
 }
