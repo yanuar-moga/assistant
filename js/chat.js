@@ -1,6 +1,6 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
- * Final Consolidated Version (Sapaan & Persona Integration)
+ * Final Consolidated Version (Warm Greeting & Integrated Commands)
  */
 
 const ChatEngine = {
@@ -28,7 +28,7 @@ const ChatEngine = {
     },
 
     initializeUI() {
-        const savedAssistant = localStorage.getItem("panda_active_assistant") || "panda";
+        const savedAssistant = localStorage.getItem("panda_assistant_persona") || "panda";
         if (typeof AssistantEngine !== 'undefined' && AssistantEngine.applyPersona) {
             AssistantEngine.applyPersona(savedAssistant);
         }
@@ -36,12 +36,19 @@ const ChatEngine = {
 
     triggerGreeting() {
         const user = localStorage.getItem("panda_user_name");
-        if (!user) {
-            this.appendMessage("Assistant", "Halo 👋 Siapa nama Anda?");
-            localStorage.setItem("panda_flow_step", "WAITING_NAME");
-        } else {
-            this.appendMessage("Assistant", `Halo ${user} 👋 Senang bertemu Anda lagi! Ada yang bisa saya bantu?`);
-        }
+        const assistantName = AssistantEngine.current || "Panda";
+        
+        TypingEngine.show();
+        setTimeout(() => {
+            TypingEngine.hide();
+            if (!user) {
+                this.appendMessage("Assistant", `Halo! Selamat datang di asisten AI saya. Saya ${assistantName}, asisten pribadi Anda. Siapa nama Anda?`);
+                localStorage.setItem("panda_flow_step", "WAITING_NAME");
+            } else {
+                this.appendMessage("Assistant", `Halo kembali, ${user}! 👋 Senang sekali bisa membantu Anda hari ini. Ada yang bisa saya bantu?`);
+            }
+            this.appendMessage("Assistant", "💡 Tips: Ketik /help untuk melihat daftar perintah yang tersedia.");
+        }, 800);
     },
 
     sendMessage() {
@@ -74,7 +81,7 @@ const ChatEngine = {
         TypingEngine.show();
         setTimeout(() => {
             TypingEngine.hide();
-            this.appendMessage("Assistant", `Salam kenal ${text}! Ketik /help untuk melihat menu perintah.`);
+            this.appendMessage("Assistant", `Salam kenal ${text}! Senang berkenalan dengan Anda. Ketik /help untuk melihat menu perintah.`);
             this.markAsRead(msgId);
         }, 1000);
     },
@@ -104,11 +111,11 @@ const ChatEngine = {
             if (result.status === "success") {
                 this.appendMessage("Assistant", result.answer);
             } else {
-                this.appendMessage("Assistant", "Maaf, data tidak ditemukan. Pertanyaan Anda sudah dicatat! 🐼");
+                this.appendMessage("Assistant", "Maaf, data tidak ditemukan. Pertanyaan Anda sudah dicatat untuk dipelajari! 🐼");
             }
         } catch (e) {
             TypingEngine.hide();
-            this.appendMessage("Assistant", "Gagal terhubung ke server.");
+            this.appendMessage("Assistant", "Gagal terhubung ke server. Silakan coba lagi nanti.");
             console.error("Fetch Error: ", e);
         }
     },
@@ -146,6 +153,7 @@ const CommandEngine = {
     execute(text) {
         const cmd = text.toLowerCase().trim();
 
+        // Aksi Lokal
         if (cmd === "/cls" || cmd === "/clear") {
             ChatEngine.clearChat();
         } 
@@ -158,9 +166,7 @@ const CommandEngine = {
                 ChatEngine.appendMessage("Assistant", "Format salah. Gunakan: /assistant clippy atau /assistant panda");
             }
         }
-        else if (cmd === "/help") {
-            ChatEngine.processAiResponse("/help", "msg-help", true);
-        } 
+        // Kirim semua perintah lainnya (termasuk /help) ke Server/Sheets
         else {
             ChatEngine.processAiResponse(cmd, "msg-cmd", true);
         }
@@ -170,7 +176,8 @@ const CommandEngine = {
 // Auto-Trigger saat aplikasi dimuat
 document.addEventListener('DOMContentLoaded', () => {
     ChatEngine.init();
+    // Beri sedikit jeda agar UI sempat memuat avatar
     setTimeout(() => {
         ChatEngine.triggerGreeting();
-    }, 500);
+    }, 1000);
 });
