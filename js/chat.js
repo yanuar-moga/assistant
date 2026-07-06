@@ -113,11 +113,8 @@ const ChatEngine = {
             this.markAsRead(userMsgId);
             
             if (result.status === "success") {
-                // Terapkan perapian teks di sini sebelum ditampilkan
-                let finalAnswer = result.answer;
-                if (isCommand) {
-                    finalAnswer = finalAnswer.replace(/ • /g, "<br>• ");
-                }
+                // LOGIKA AGRESIF: Ganti SEMUA simbol • dengan <br>•
+                let finalAnswer = result.answer.replace(/•/g, "<br>•");
                 this.appendMessage("Assistant", finalAnswer);
             } else {
                 this.appendMessage("Assistant", "Maaf, data tidak ditemukan.");
