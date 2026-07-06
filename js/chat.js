@@ -1,10 +1,11 @@
 /**
  * PANDA ASSISTANT - Main Chat Execution Engine
- * Final Version: Refined Greeting & Cleaned UI Controllers
+ * Final Version: Fixed Close-Loop Duplication & Clean UI
  */
 
 const ChatEngine = {
     SPREADSHEET_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwx1xLp3t0fgG1idoqsz9vCaEd0A3xo8N9pzcLLY8bzzjn9npvoKijXBFtOg4iekBFn1A/exec",
+    isClosing: false, // Flag untuk mencegah event close ganda
 
     init() {
         this.initializeUI();
@@ -12,19 +13,28 @@ const ChatEngine = {
         const btnSend = document.getElementById("btn-send");
         const btnClose = document.getElementById("btn-close");
 
-        if (btnSend) btnSend.addEventListener("click", () => this.sendMessage());
-        if (input) {
-            input.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") this.sendMessage();
-            });
+        // Gunakan .onclick untuk memastikan hanya ada 1 listener aktif
+        if (btnSend) {
+            btnSend.onclick = () => this.sendMessage();
         }
         
-        // Hanya menangani tombol Close, btn-minimize sudah dihapus
+        if (input) {
+            input.onkeydown = (e) => {
+                if (e.key === "Enter") this.sendMessage();
+            };
+        }
+        
         if (btnClose) {
-            btnClose.addEventListener("click", () => {
+            btnClose.onclick = () => {
+                if (this.isClosing) return; // Mencegah klik berulang
+                this.isClosing = true;
+                
                 this.appendMessage("Assistant", "Sampai jumpa lagi! ✨");
-                setTimeout(() => AssistantEngine.deactivateChatbox(), 1000);
-            });
+                setTimeout(() => {
+                    AssistantEngine.deactivateChatbox();
+                    this.isClosing = false; // Reset flag saat chatbox tertutup
+                }, 1000);
+            };
         }
     },
 
@@ -37,7 +47,7 @@ const ChatEngine = {
 
     triggerGreeting() {
         const body = document.getElementById("chat-body");
-        // Mencegah greeting muncul 2x jika chat sudah ada isinya
+        // Mencegah greeting jika chat sudah berisi pesan
         if (body && body.children.length > 0) return;
 
         const user = localStorage.getItem("panda_user_name");
