@@ -1,39 +1,28 @@
 /* ==========================================================================
    1. RESET & BASE STYLES
    ========================================================================== */
-*, *::before, *::after { 
-    box-sizing: border-box; 
-}
-
+*, *::before, *::after { box-sizing: border-box; }
 html, body {
-    margin: 0; 
-    padding: 0; 
-    width: 100%; 
-    height: 100%;
-    overflow: hidden; 
-    font-family: Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent;
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; font-family: Arial, sans-serif;
 }
 
 /* ==========================================================================
-   2. FULLSCREEN BACKGROUND
+   2. FULLSCREEN BACKGROUND (Dibuat benar-benar statis/diam)
    ========================================================================== */
 .fullscreen-bg {
     position: fixed;
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    z-index: -1;
+    top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
     background-image: url("https://apxid.github.io/assistant/assets/bg.png");
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    /* Menghindari pergeseran saat ada elemen lain */
+    background-attachment: fixed; 
 }
 
 /* ==========================================================================
-   3. ASSISTANT CHARACTER WIDGET
+   3. ASSISTANT CHARACTER WIDGET (Dibuat independen)
    ========================================================================== */
 .assistant-character {
     position: fixed;
@@ -42,31 +31,22 @@ html, body {
     width: 150px; 
     height: 150px;
     cursor: pointer; 
-    z-index: 999;
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 100; /* Z-index lebih tinggi agar tidak terpengaruh background */
+    transition: transform 0.3s ease;
 }
 
-.assistant-character:hover { 
-    transform: scale(1.05); 
+/* Media Query Khusus HP */
+@media (max-width: 600px) {
+    .assistant-character { 
+        width: 80px; 
+        height: 80px; 
+        bottom: 10px; 
+        /* Kita ganti dari 'right' ke 'margin-right' agar tidak menggeser layout */
+        margin-right: 5px; 
+        right: 0; 
+    }
 }
 
 .assistant-character img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: contain; 
-}
-
-/* Media Query untuk HP (Aggressive Positioning) */
-@media (max-width: 600px) {
-    .assistant-character { 
-        width: 120px;      /* Ukuran sedikit lebih besar agar resolusi tajam */
-        height: 120px; 
-        bottom: 0px;       /* Tempel bawah */
-        
-        /* Menggeser keluar layar secara agresif */
-        right: -45px;      
-        
-        /* Memotong area visual yang tidak perlu agar tidak terlihat di layar */
-        clip-path: inset(0px 20px 0px 0px); 
-    }
+    width: 100%; height: 100%; object-fit: contain; pointer-events: none; 
 }
